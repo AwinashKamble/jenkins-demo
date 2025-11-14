@@ -1,6 +1,9 @@
-FROM ubuntu:22.04
+FROM python:3.9-slim
 
-RUN apt update -y && apt install -y curl
+WORKDIR /app
 
-# Keep the container running infinitely
-CMD ["sh", "-c", "while true; do echo 'Container Running...'; sleep 5; done"]
+COPY app.py .
+
+EXPOSE 5000
+
+CMD ["python3", "app.py"]
