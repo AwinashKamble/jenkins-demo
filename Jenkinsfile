@@ -1,42 +1,56 @@
 pipeline {
     agent { label 'node1' }
 
+    environment {
+        DOCKERHUB_USER = "awinash8"   // Your DockerHub username
+        IMAGE = "jenkins-demo"
+    }
+
     stages {
 
         stage('Checkout') {
             steps {
-                echo "Code Checked Out Successfully"
+                echo "Pulling latest code..."
+                checkout scm
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
-                sh '''
-                echo "Building Application..."
-                '''
+                script {
+                    echo "Building Docker image..."
+                    sh """
+                    docker build -t ${DOCKERHUB_USER}/${IMAGE}:latest .
+                    """
+                }
             }
         }
 
-        stage('Test') {
+        stage('Login to DockerHub') {
             steps {
-                sh '''
-                echo "Testing Application..."
-                '''
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    sh """
+                    echo "$PASS" | docker login -u "$USER" --password-stdin
+                    """
+                }
             }
         }
 
-        stage('Deploy') {
+        stage('Push Docker Image') {
             steps {
-                sh '''
-                echo "Deploying Application..."
-                '''
+                script {
+                    echo "Pushing Docker image..."
+                    sh """
+                    docker push ${DOCKERHUB_USER}/${IMAGE}:latest
+                    """
+                }
             }
         }
-    }
 
-    post {
-        always {
-            echo "Pipeline completed successfully"
+        stage('Done') {
+            steps {
+                echo "Docker Build and Push Complete!"
+            }
         }
     }
 }
