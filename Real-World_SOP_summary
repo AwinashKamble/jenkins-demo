@@ -1,0 +1,59 @@
+Real-world SOP summary (1-page style)
+
+Aise likh sakte ho change ticket / SOP me:
+
+Pre-steps
+
+Instance details note karo (ID, Name, IP, OS)
+
+AMI backup banao
+
+Login
+
+SSH using key pair
+
+Pre checks
+
+whoami, hostname -f
+
+cat /etc/os-release
+
+uname -r
+
+df -h, free -h, uptime
+
+Repo & updates
+
+yum repolist
+
+yum check-update
+
+Apply patches
+
+Security only: yum update --security -y
+
+Full: yum update -y
+
+Check reboot requirement
+
+Install utils: yum install -y yum-utils
+
+needs-restarting -r
+
+Reboot
+
+reboot
+
+Post checks
+
+uname -r
+
+systemctl status <services>
+
+App/URL test
+
+Logs & cleanup
+
+cat /var/log/yum.log
+
+yum clean all
